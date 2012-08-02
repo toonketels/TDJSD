@@ -18,4 +18,16 @@ TestCase("ArrayTest", {
 
   		assertEquals(2, testFunction.length);
     }
+
+  , "test object[label] should return the value of the object's property": function () {
+  		var obj = {one: 'one value'};
+
+  		assertEquals("one value", obj['one']);
+    }
+
+  , "test array[index] should return the value of the array at that index": function () {
+  		var arr = [1, 2, 3, 5, 8, 13, 21, 34, 55];
+
+  		assertEquals(8, arr[4]);
+    }
 });
