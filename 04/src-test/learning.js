@@ -30,4 +30,19 @@ TestCase("ArrayTest", {
 
   		assertEquals(8, arr[4]);
     }
+
+  , "test function property should be the same for each invokation of that function": function () {
+
+		function hello() {
+			hello.count++;
+		}
+
+  		hello.count = 0;
+
+  		hello();
+  		hello();
+  		hello();
+
+  		assertEquals(3, hello.count);
+    }
 });
