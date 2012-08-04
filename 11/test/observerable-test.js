@@ -7,23 +7,23 @@ TestCase("ObserverableAddObserverTest", {
   , "test should store function" : function () {
 		var observers = [function () {}, function () {}];
 
-		assertFalse(this.observable.hasObserver(observers[0]));
+		assertFalse(this.observable.hasObserver("event", observers[0]));
 
-		this.observable.observe(observers[0]);
-		this.observable.observe(observers[1]);
+		this.observable.observe("event", observers[0]);
+		this.observable.observe("event", observers[1]);
 
-		assertTrue(this.observable.hasObserver(observers[0]));
-		assertTrue(this.observable.hasObserver(observers[1]));
+		assertTrue(this.observable.hasObserver("event", observers[0]));
+		assertTrue(this.observable.hasObserver("event", observers[1]));
 	}
 
   , "test should call all observers": function () {
   		var observer1 = function () { observer1.called = true; };
   		var observer2 = function () { observer2.called = true; };
 
-  		this.observable.observe(observer1);
-  		this.observable.observe(observer2);
+  		this.observable.observe("event", observer1);
+  		this.observable.observe("event", observer2);
 
-  		this.observable.notify();
+  		this.observable.notify("event");
 
   		assertTrue(observer1.called);
   		assertTrue(observer2.called);
@@ -32,18 +32,18 @@ TestCase("ObserverableAddObserverTest", {
   , "test should pass through arguments": function () {
   		var actual;
 
-  		this.observable.observe(function () {
+  		this.observable.observe("event", function () {
   			actual = arguments;
   		});
 
-  		this.observable.notify("String", 1, 32);
+  		this.observable.notify("event", "String", 1, 32);
 
   		assertEquals(["String", 1, 32], actual);
     }
 
   , "test should throw for uncallable observer": function () {
   		assertException(function () {
-  			this.observable.observe({});
+  			this.observable.observe("event", {});
   		}, "TypeError");
     }
 
@@ -51,9 +51,9 @@ TestCase("ObserverableAddObserverTest", {
   		var observer1 = function () { throw new Error('Catch me if you can.'); };
   		var observer2 = function () { observer2.called = true; };
 
-  		this.observable.observe(observer1);
-  		this.observable.observe(observer2);
-  		this.observable.notify();
+  		this.observable.observe("event", observer1);
+  		this.observable.observe("event", observer2);
+  		this.observable.notify("event");
 
   		assertTrue(observer2.called);
     }
@@ -63,9 +63,9 @@ TestCase("ObserverableAddObserverTest", {
   		var observer1 = function () { calls.push(observer1); };
   		var observer2 = function () { calls.push(observer2); };
 
-  		this.observable.observe(observer1);
-  		this.observable.observe(observer2);
-  		this.observable.notify();
+  		this.observable.observe("event", observer1);
+  		this.observable.observe("event", observer2);
+  		this.observable.notify("event");
 
   		assertEquals(observer1, calls[0]);
   		assertEquals(observer2, calls[1]);
@@ -75,7 +75,23 @@ TestCase("ObserverableAddObserverTest", {
   		var observable = this.observable;
 
   		assertNoException(function () {
-  			observable.notify();
+  			observable.notify("event");
   		});
+    }
+
+  , "test should notify relevant observers only": function () {
+  		var calls = [];
+
+  		this.observable.observe("event", function () {
+  			calls.push("event");
+  		});
+
+  		this.observable.observe("other", function () {
+  			calls.push("other");
+  		});
+
+  		this.observable.notify("other");
+
+  		assertEquals(["other"], calls);
     }
 });

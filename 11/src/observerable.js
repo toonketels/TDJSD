@@ -2,31 +2,40 @@ tddjs.namespace("util");
 
 (function () {
 
-	function observe(observer) {
-		if(!this.observers) {
-			this.observers = [];
+	function _observers(observable, event) {
+		if(!observable.observers) {
+			observable.observers = {};
 		}
+
+		if(!observable.observers[event]) {
+			observable.observers[event] = [];
+		}
+
+		return observable.observers[event];
+	}
+
+	function observe(event, observer) {
 		if(typeof observer !== 'function') {
 			throw new TypeError("This is not a function.");
 		}
-		this.observers.push(observer);
+
+		_observers(this, event).push(observer);
 	}
 
-	function hasObserver(observer) {
-		if(!this.observers) {
-			return false;
-		}
-		return (this.observers.indexOf(observer) !== -1);
+	function hasObserver(event, observer) {
+		var observers = _observers(this, event);
+
+		return (observers.indexOf(observer) !== -1);
 	}
 
-	function notify() {
-		if(!this.observers) {
-			console.log('called');
-			return;
-		}
-		for (var i = 0, l = this.observers.length; i < l; i++) {
+	function notify(event) {
+		var observers = _observers(this, event);
+
+		var args = Array.prototype.slice.call(arguments, 1);
+
+		for (var i = 0, l = observers.length; i < l; i++) {
 			try {
-				this.observers[i].apply(this, arguments);
+				observers[i].apply(this, args);
 			} catch (e) {}
 		}
 	}
