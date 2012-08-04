@@ -1,11 +1,8 @@
 tddjs.namespace("util");
 
 (function () {
-	function Observerable() {
 
-	}
-
-	function addObserver(observer) {
+	function observe(observer) {
 		if(!this.observers) {
 			this.observers = [];
 		}
@@ -22,8 +19,9 @@ tddjs.namespace("util");
 		return (this.observers.indexOf(observer) !== -1);
 	}
 
-	function notifyObservers() {
+	function notify() {
 		if(!this.observers) {
+			console.log('called');
 			return;
 		}
 		for (var i = 0, l = this.observers.length; i < l; i++) {
@@ -33,9 +31,10 @@ tddjs.namespace("util");
 		}
 	}
 
-	Observerable.prototype.addObserver = addObserver;
-	Observerable.prototype.hasObserver = hasObserver;
-	Observerable.prototype.notifyObservers = notifyObservers;
+	tddjs.namespace("util").observable = {
+		observe: observe
+	  , hasObserver: hasObserver
+	  , notify: notify
+	};
 
-	tddjs.util.Observerable = Observerable;
 }());
