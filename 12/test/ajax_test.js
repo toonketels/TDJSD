@@ -1,26 +1,61 @@
-TestCase("AjaxCreateTest", {
+// Wrap testcase in anonymous function
+// to access ajax namespace via variable.
+(function () {
 
-	"test should return XMLHttpRequest object": function () {
-		var xhr = tddjs.ajax.create();
+	var ajax = tddjs.ajax;
 
-		assertNumber(xhr.readyState);
-		assert(tddjs.isHostMethod(xhr, "open"));
-		assert(tddjs.isHostMethod(xhr, "send"));
-		assert(tddjs.isHostMethod(xhr, "setRequestHeader"));
-	}
+	TestCase("AjaxCreateTest", {
+	
+		"test should return XMLHttpRequest object": function () {
+			var xhr = ajax.create();
+	
+			assertNumber(xhr.readyState);
+			assert(tddjs.isHostMethod(xhr, "open"));
+			assert(tddjs.isHostMethod(xhr, "send"));
+			assert(tddjs.isHostMethod(xhr, "setRequestHeader"));
+		}
+	
+	});
 
-});
 
-TestCase("GetRequestTest", {
 
-	"test should define get method": function () {
-		assertFunction(tddjs.ajax.get);
-	}
+	TestCase("GetRequestTest", {
 
-  , "test should throw error without url": function () {
-  		assertException(function () {
-  			tddjs.ajax.get();
-  		}, "TypeError");
-    }
+		setUp: function () {
+			// Save original implementation ajax.create...
+			this.ajaxCreate = ajax.create;
+		}
 
-});
+	  , tearDown: function () {
+	  		// Restore it when tests are done.
+	  		ajax.create = this.ajaxCreate;
+	    }
+	
+	  , "test should define get method": function () {
+			assertFunction(ajax.get);
+		}
+	
+	  , "test should throw error without url": function () {
+	  		assertException(function () {
+	  			ajax.get();
+	  		}, "TypeError");
+	    }
+
+	  , "test should obtain an XMLHttpRequest object": function () {
+
+	  		// Stub it: overrite original implementation...
+	  		ajax.create = function () {
+	  			ajax.create.called = true;
+	  		}
+
+	  		// Make the actual get request, this should call our
+	  		// overwritted create implementation...
+	  		ajax.get("/url");
+
+	  		// Test it...
+	  		assert(ajax.create.called);
+	    }
+
+	});
+
+}());

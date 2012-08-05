@@ -1,18 +1,17 @@
 tddjs.namespace("ajax");
 
-tddjs.namespace("ajax").create;
-
-tddjs.namespace("ajax").get = function (url) {
-	if (typeof url != "string") {
-		throw new TypeError("URL should be string.");
-	}
-};
-
 // Will be executed at load time.
 // Does initial setup: checks for ajax support browser
+// Use anonymous function's scope for attaching functions
+// to ajax namespace.
 (function () {
+
+	tddjs.namespace("ajax");
+
 	var xhr;
 	var ajax = tddjs.namespace("ajax");
+
+	ajax.create;
 
 	var options = [
 		function () {
@@ -38,4 +37,15 @@ tddjs.namespace("ajax").get = function (url) {
 			}
 		} catch (e) {}
 	}
+
+
+	function get(url) {
+		if (typeof url != "string") {
+			throw new TypeError("URL should be string");
+		}
+
+		var transport = ajax.create();
+	}
+
+	ajax.get = get;
 } ());
