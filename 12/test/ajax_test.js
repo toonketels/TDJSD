@@ -44,9 +44,7 @@
 	  , "test should obtain an XMLHttpRequest object": function () {
 
 	  		// Stub it: overrite original implementation...
-	  		ajax.create = function () {
-	  			ajax.create.called = true;
-	  		}
+	  		ajax.create = stubFn();
 
 	  		// Make the actual get request, this should call our
 	  		// overwritted create implementation...
@@ -54,6 +52,17 @@
 
 	  		// Test it...
 	  		assert(ajax.create.called);
+	    }
+
+	  , "test should open with method, url, async flag": function () {
+
+	  		var openStub = stubFn();
+	  		ajax.create = stubFn({open: openStub});
+
+	  		var url = "/url";
+	  		ajax.get(url);
+
+	  		assertEquals(["GET", url, true], openStub.args);
 	    }
 
 	});

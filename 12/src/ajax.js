@@ -45,6 +45,7 @@ tddjs.namespace("ajax");
 		}
 
 		var transport = ajax.create();
+		transport.open("GET", url, true);
 	}
 
 	ajax.get = get;
