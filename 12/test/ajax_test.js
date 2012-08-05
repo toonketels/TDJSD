@@ -24,6 +24,8 @@
 		setUp: function () {
 			// Save original implementation ajax.create...
 			this.ajaxCreate = ajax.create;
+			this.xhr = Object.create(fakeXMLHttpRequest);
+			ajax.create = stubFn(this.xhr);
 		}
 
 	  , tearDown: function () {
@@ -43,9 +45,6 @@
 
 	  , "test should obtain an XMLHttpRequest object": function () {
 
-	  		// Stub it: overrite original implementation...
-	  		ajax.create = stubFn();
-
 	  		// Make the actual get request, this should call our
 	  		// overwritted create implementation...
 	  		ajax.get("/url");
@@ -56,13 +55,10 @@
 
 	  , "test should open with method, url, async flag": function () {
 
-	  		var openStub = stubFn();
-	  		ajax.create = stubFn({open: openStub});
-
 	  		var url = "/url";
 	  		ajax.get(url);
 
-	  		assertEquals(["GET", url, true], openStub.args);
+	  		assertEquals(["GET", url, true], this.xhr.open.args);
 	    }
 
 	});
