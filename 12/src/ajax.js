@@ -2,6 +2,11 @@ tddjs.namespace("ajax");
 
 tddjs.namespace("ajax").create;
 
+tddjs.namespace("ajax").get = function (url) {
+	if (typeof url != "string") {
+		throw new TypeError("URL should be string.");
+	}
+};
 
 // Will be executed at load time.
 // Does initial setup: checks for ajax support browser
@@ -22,8 +27,15 @@ tddjs.namespace("ajax").create;
 	for (var i = 0, l = options.length; i < l; i++) {
 		try {
 			xhr = options[i]();
-			ajax.create = options[i];
-			break;
+
+			if (typeof xhr.readyState == "number" &&
+				tddjs.isHostMethod(xhr, "open") &&
+				tddjs.isHostMethod(xhr, "send") &&
+				tddjs.isHostMethod(xhr, "setRequestHeader")) {
+	
+				ajax.create = options[i];	
+				break;
+			}
 		} catch (e) {}
 	}
 } ());
